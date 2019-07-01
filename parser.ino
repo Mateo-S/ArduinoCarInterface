@@ -3,7 +3,7 @@
 int steeringPwmPin = 3;
 int enginePwmPin = 5;
 SerialMessageParser* messager;
-
+double engineOutput;
 
 void setup(){
   messager = new SerialMessageParser();
@@ -17,8 +17,17 @@ void loop() {
   messager->update();
 
   double steering = messager->getSteering();
-  double engine = messager->getEngine();
+  double braking = messager->getBraking();
+  double throttle = messager->getThrottle();
 
+  //merge throttle and braking into one value
+  engineOutput = CarOutput(throttle, braking);
+
+  //sending pwm to car
   analogWrite(steeringPwmPin, steering);
-  analogWrite(enginePwmPin, engine);
+  analogWrite(enginePwmPin, engineOutput);
+}
+
+double CarOutput(double throttle, double braking) {
+  engineOutput = ((double) throttle + (double) braking) / 2.0;
 }
