@@ -1,6 +1,6 @@
 #include <serialMessager.h>
 
-int steeringPwmPin = 3;
+int steeringPwmPin = 9;
 int enginePwmPin = 5;
 int POTENTIOMETER_PIN = A0;
 int POTENTIOMETER_UPPER_BOUND = 1024;
