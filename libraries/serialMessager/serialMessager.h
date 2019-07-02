@@ -8,8 +8,9 @@ public:
     SerialMessageParser();
     ~SerialMessageParser();
     void update();
+    double getThrottle();
+    double getBraking();
     double getSteering();
-    double getEngine();
 
     enum MessageType {
         THROTTLE = 0,
@@ -25,8 +26,9 @@ public:
 
 private:
     double steering_output;
-    double engine_output;
-    double calcCarOutput(int16_t throttle, int16_t braking);
+    double braking_output;
+    double throttle_output;
+    // double calcCarOutput(int16_t throttle, int16_t braking);
     struct InputDriverMessage{ //individual messages that come from the nano
         uint8_t type;
         uint8_t padding;
