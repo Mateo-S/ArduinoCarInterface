@@ -1,8 +1,8 @@
 #include "servoController.h"
 
-ServoController::ServoController(double minVel, 
-    double velConstant,
-     int percentVelMaxAccel,
+ServoController::ServoController(double& minVel, 
+    double& velConstant,
+     int& percentVelMaxAccel,
       double ip):
 
     MIN_VEL(minVel),
@@ -47,7 +47,7 @@ void ServoController :: setDiffMaxAndCurrent (double mav, double mp){
 void ServoController :: setFinalPos(double fp){
     finalPos = fp;
     setMaxAccelV(getMyPos(),fp,getPercentVelMaxAccel());
-    setDiffMaxAndCurrent(GetMaxAccelV(),getMyPos());
+    setDiffMaxAndCurrent(getMaxAccelV(),getMyPos());
     setDeltaV(getMinVel(),getVelConstant(),getDiffMaxAndCurrent());
 }
 void ServoController :: setInitialPos(double ip){
