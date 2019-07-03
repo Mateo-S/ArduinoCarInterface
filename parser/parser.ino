@@ -1,47 +1,70 @@
 #include <serialMessager.h>
 #include <Servo.h>
+#include <servoController.h>
 
 int steeringPwmPin = 9;
 int enginePwmPin = 5;
 int POTENTIOMETER_PIN = A0;
 int POTENTIOMETER_UPPER_BOUND = 1024;
-Servo steeringServo;
-Servo engineServo;
 int steeringServoPosition = 0;
 int engineServoPosition = 0;
+Servo steeringServo;
+Servo engineServo;
 
-SerialMessageParser* messager;
 double engineOutput = 0;
+double steeringOutput = 0;
 double steering = 0;
 double braking = 0;
 double throttle = 0;
 double oldEngine = 0;
 double oldSteering = 0;
 
+double ENGINE_MIN_VEL = 0.40;
+double ENGINE_VEL_CONSTANT = 0.66;
+int ENGINE_PERCENT_VEL_MAX_ACCEL = 50;
+
+double STEERING_MIN_VEL = 0.40;
+double STEERING_VEL_CONSTANT = 0.66;
+int STEERING_PERCENT_VEL_MAX_ACCEL = 50;
+
+SerialMessageParser* messager;
+ServoController* engineServoController = new ServoController(ENGINE_MIN_VEL, ENGINE_VEL_CONSTANT, ENGINE_PERCENT_VEL_MAX_ACCEL, (double) engineServo.read());
+ServoController* steeringServoController = new ServoController(STEERING_MIN_VEL, STEERING_VEL_CONSTANT, STEERING_PERCENT_VEL_MAX_ACCEL, (double) steeringServo.read());
+
 void setup(){
   Serial.begin(9600);
   messager = new SerialMessageParser();
-
-  steeringServo.attach(steeringPwmPin);
   engineServo.attach(enginePwmPin);
+  steeringServo.attach(steeringPwmPin);
+  engineServo.write(0);
+  steeringServo.write(90);
   pinMode(POTENTIOMETER_PIN, INPUT);
   Serial.println("potLimit: "+analogRead(POTENTIOMETER_PIN)/POTENTIOMETER_UPPER_BOUND); 
 }
 
 // the loop function runs over and over again forever
 void loop() {
+  //get messages
   messager->update();
-
+  //check max speed
   int potLimit = analogRead(POTENTIOMETER_PIN)/POTENTIOMETER_UPPER_BOUND;
-  oldSteering = steering;
+  
+  //get old values to compare later
+  oldSteering = steeringOutput;
   oldEngine = engineOutput;
 
+  //get steering, braking, throttle from jetson
   steering = messager->getSteering();
   braking = messager->getBraking();
   throttle = messager->getThrottle();
 
-  //merge throttle and braking into one value
-  engineOutput = CarOutput(throttle, braking);
+  //run jetson's values through smoothing library
+  engineServoController->setFinalPos(carOutput(throttle, braking));
+  steeringServoController->setFinalPos(steering);
+
+  //update smooth path
+  engineOutput = engineServoController->update();
+  steeringOutput = steeringServoController->update();
 
   //potentiometer limiter
   if(engineOutput<=potLimit){ //if the calculated engine output is higher than the limit set by the potentiometer then cap it at potLimit
@@ -49,18 +72,18 @@ void loop() {
   }
 
   Serial.print("Steering: ");
-  Serial.println(steering);
+  Serial.println(steeringOutput);
   Serial.print("Engine: ");
   Serial.println(engineOutput);
 
   if(oldSteering != steering){
-    steeringServo.write(steering*180);
+    steeringServo.write(steeringOutput);
   }
   if(oldEngine != engineOutput){
-    engineServo.write(engineOutput*180);
+    engineServo.write(engineOutput);
   }
 }
 
-double CarOutput(double throttle, double braking) {
+double carOutput(double throttle, double braking) {
   engineOutput = ((double) throttle + (double) braking) / 2.0;
 }
