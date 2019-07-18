@@ -6,7 +6,7 @@
 
 class SerialSender{
 	public:
-		SerialSender(const std::string&);
+		SerialSender(const std::string& dev = "/dev/ttyACM0");
 		~SerialSender();
 		enum MessageType {
 			THROTTLE = 0,

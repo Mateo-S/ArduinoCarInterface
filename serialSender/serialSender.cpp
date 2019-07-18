@@ -1,7 +1,7 @@
 #include "serialSender.h"
 #include <iostream>
 
-SerialSender::SerialSender(const std::string& dev = "/dev/ttyACM0"){
+SerialSender::SerialSender(const std::string& dev){
 	device = dev;
 	if(sp_get_port_by_name(dev.c_str(), &port) != SP_OK){
 		std::cerr << "device not found" << std::endl;
