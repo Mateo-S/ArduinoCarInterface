@@ -1,4 +1,5 @@
 #include "serialMessager.h"
+#include <limits.h>
 
 SerialMessageParser::SerialMessageParser() { //setup
   Serial.begin(9600);
@@ -18,13 +19,13 @@ void SerialMessageParser::update() { //loop
   message = * ((struct InputDriverMessage * ) serialInput);
 
   if (message.type == THROTTLE) { //if it's a steering message
-    parsed.throttle = message.signal;
+    parsed.throttle = message.signal > 0 ? message.signal/SHRT_MAX : message.signal/SHRT_MIN;
     status = MSG_OK;
   } else if (message.type == BRAKING) {
-    parsed.braking = message.signal;
+    parsed.braking = message.signal > 0 ? message.signal/SHRT_MAX : message.signal/SHRT_MIN;
     status = MSG_OK;
   } else if (message.type == STEERING) {
-    parsed.steering = message.signal;
+    parsed.steering = message.signal > 0 ? message.signal/SHRT_MAX : message.signal/SHRT_MIN;
     status = MSG_OK;
   } else { // If the message is unrecognized
     status = MSG_BAD;
