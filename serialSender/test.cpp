@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
-#include <chrono>
+// #include <chrono>
+#include <unistd.h>
 #include <limits.h>
 #include "serialSender.h"
 
@@ -18,10 +19,13 @@ int main(int argc, char* argv[]){
         exit(1);
     }
 
-    std::thread::sleep_for(std::chrono::seconds(2));
-    updateSteering(SHRT_MAX - (SHRT_MAX/10)); //right
-    std::thread::sleep_for(std::chrono::seconds(2));
-    updateSteering(SHRT_MIN - (SHRT_MIN/10)); //left
-    std::thread::sleep_for(std::chrono::seconds(2));
-    updateSteering(0); //middle
+    usleep(2000);
+    // std::thread::sleep_for(std::chrono::seconds(2));
+    car -> updateSteering(SHRT_MAX - (SHRT_MAX/10)); //right
+    usleep(2000);
+    // std::thread::sleep_for(std::chrono::seconds(2));
+    car -> updateSteering(SHRT_MIN - (SHRT_MIN/10)); //left
+    usleep(2000);
+    // std::thread::sleep_for(std::chrono::seconds(2));
+    car -> updateSteering(0); //middle
 }
