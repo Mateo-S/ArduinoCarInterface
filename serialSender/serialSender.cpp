@@ -40,8 +40,16 @@ int SerialSender::sendMessage(){
 	sp_blocking_write(port, (void*) &message, sizeof(struct OutputDriverMessage), MAX_TIMEOUT);
 
 	uint8_t ack;
-
 	sp_blocking_read(port, (void*) &ack, sizeof(uint8_t), MAX_TIMEOUT);
+
+	struct {
+		double steering;
+		double engine;
+	} debug;
+	sp_blocking_read(port, (void*) &debug, 2 * sizeof(double), MAX_TIMEOUT);
+
+	std::cout << "Steering status: " << debug.steering << std::endl;
+	std::cout << "Engine status:   " << debug.engine << std::endl;
 	
 	return (int) ack;
 }

@@ -11,6 +11,7 @@ public:
     double getThrottle();
     double getBraking();
     double getSteering();
+    bool isUpdated();
 
     enum MessageType {
         THROTTLE = 0,
@@ -25,6 +26,7 @@ public:
     };
 
 private:
+    bool updated;
     double steering_output;
     double braking_output;
     double throttle_output;

@@ -35,7 +35,7 @@ ServoController * engineServoController;
 ServoController * steeringServoController;
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     messager = new SerialMessageParser();
     // engineServoController = new ServoController(ENGINE_MIN_VEL, ENGINE_VEL_CONSTANT, ENGINE_PERCENT_VEL_MAX_ACCEL, ENGINE_PWM_PIN);
     engineServoController = new ServoController(ServoController::ENGINE, ENGINE_PWM_PIN);
@@ -49,7 +49,7 @@ void setup() {
     steeringOutput = steeringServoController -> update();
 
     pinMode(POTENTIOMETER_PIN, INPUT);
-    Serial.println("potLimit: " + analogRead(POTENTIOMETER_PIN) / POTENTIOMETER_UPPER_BOUND);
+    // Serial.println("potLimit: " + analogRead(POTENTIOMETER_PIN) / POTENTIOMETER_UPPER_BOUND);
 }
     void loop() {
       //get messages
@@ -79,10 +79,14 @@ void setup() {
         engineOutput = potLimit;
       }
 
-      Serial.print("Steering: ");
-      Serial.println(steeringOutput);
-      Serial.print("Engine: ");
-      Serial.println(engineOutput);
+      // Serial.print("Steering: ");
+      // Serial.println(steeringOutput);
+      // Serial.print("Engine: ");
+      // Serial.println(engineOutput);
+      if (messager.isUpdated()) {
+        Serial.write(steeringOutput);
+        Serial.write(engineOutput);
+      }
     }
 
     double carOutput(double throttle, double braking) {

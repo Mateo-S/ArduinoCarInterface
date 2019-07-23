@@ -15,7 +15,13 @@ void SerialMessageParser::update() { //loop
 
   if (Serial.available() > 0) { //If something is being sent to the Arduino via serial
     Serial.readBytes(serialInput, 4);
-  };
+    updated = true;
+  } else {
+   updated = false; 
+  }
+
+
+
   message = * ((struct InputDriverMessage * ) serialInput);
 
   if (message.type == THROTTLE) { //if it's a steering message
@@ -33,6 +39,10 @@ void SerialMessageParser::update() { //loop
 
   Serial.write(status);
 
+}
+
+bool SerialMessageParser::isUpdated() {
+  return updated;
 }
 
 double SerialMessageParser::getSteering() {
