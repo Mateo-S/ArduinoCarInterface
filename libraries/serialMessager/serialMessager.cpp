@@ -38,7 +38,6 @@ void SerialMessageParser::update() { //loop
   }
 
   Serial.write(status);
-
 }
 
 bool SerialMessageParser::isUpdated() {
