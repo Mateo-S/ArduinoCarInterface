@@ -83,10 +83,13 @@ void setup() {
       // Serial.println(steeringOutput);
       // Serial.print("Engine: ");
       // Serial.println(engineOutput);
-      if (messager -> isUpdated()) {
-        Serial.write(&steeringOutput, sizeof(double));
-        Serial.write(&engineOutput, sizeof(double));
-      }
+	byte * steeringOutputPointer = (byte *) &steeringOutput;
+	byte * engineOutputPointer = (byte *) &engineOutput; 
+
+	if (messager -> isUpdated()) {
+            Serial.write(steeringOutputPointer, 4);
+       	    Serial.write(engineOutputPointer, 4);
+        }
     }
 
     double carOutput(double throttle, double braking) {
