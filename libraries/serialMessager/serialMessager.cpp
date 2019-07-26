@@ -10,19 +10,19 @@ SerialMessageParser::~SerialMessageParser() {
 }
 
 void SerialMessageParser::update() { //loop
-  byte serialInput[4];
+  byte *serialInput = (byte*)&message;
   byte status = MSG_NONE;
+  updated = false; 
 
-  if (Serial.available() > 0) { //If something is being sent to the Arduino via serial
-    Serial.readBytes(serialInput, 4);
+  while (Serial.available()) { //If something is being sent to the Arduino via serial
+    serialInput += Serial.readBytes(serialInput, 1);
     updated = true;
-  } else {
-   updated = false; 
+    Serial.println("bgjhgh");
   }
 
-
-
-  message = * ((struct InputDriverMessage * ) serialInput);
+  if ((serialInput - (byte*)&message) != 4) {
+    Serial.println("Message of invalid size, received. Data stream is corrupted!\n");
+  }
 
   if (message.type == THROTTLE) { //if it's a steering message
     parsed.throttle = message.signal > 0 ? message.signal/SHRT_MAX : message.signal/SHRT_MIN;
