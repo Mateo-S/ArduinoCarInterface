@@ -43,13 +43,13 @@ int SerialSender::sendMessage(){
 	sp_blocking_read(port, (void*) &ack, sizeof(uint8_t), MAX_TIMEOUT);
 
 	struct {
-		uint8_t messageType ;
-		uint8_t messageSignal;
+		uint8_t messageType;
+		int16_t messageSignal;
 		double steering;
 		double engine;
 	} debug;
-	sp_blocking_read(port, (void*) &debug, 2 * sizeof(double), MAX_TIMEOUT);Type
 
+	sp_blocking_read(port, (void*) &debug, ( (2 * sizeof(double)) + (sizeof(uint8_t)) + (sizeof(int16_t)) ), MAX_TIMEOUT);
 
 	std::cout << "Message Type: " << debug.messageType << std::endl;
 	std::cout << "Message Signal: " << debug.messageSignal << std::endl;

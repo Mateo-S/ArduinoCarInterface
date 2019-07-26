@@ -10,7 +10,7 @@ public:
     void update();
     double getThrottle();
     double getBraking();
-    double getSteering();
+    double getSteering();   
     bool isUpdated();
 
     enum MessageType {

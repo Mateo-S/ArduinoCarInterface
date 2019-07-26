@@ -12,8 +12,8 @@ int steeringServoPosition = 0;
 int engineServoPosition = 0;
 
 //Old and current values
-double engineOutput = 0;
-double steeringOutput = 0;
+float engineOutput = 0;
+float steeringOutput = 0;
 double steering = 0;
 double braking = 0;
 double throttle = 0;
@@ -87,10 +87,13 @@ void setup() {
 	byte * engineOutputPointer = (byte *) &engineOutput; 
   
 	if (messager -> isUpdated()) {
-            Serial.write(steeringOutputPointer, 4);
-       	    Serial.write(engineOutputPointer, 4);
+            // Serial.write(steeringOutputPointer, 4);
+       	    // Serial.write(engineOutputPointer, 4);
+             Serial.println(engineOutput);
+             Serial.println(steeringOutput);
         }
-    }
+
+  }
 
     double carOutput(double throttle, double braking) {
       engineOutput = ((double) throttle + (double) braking) / 2.0;
